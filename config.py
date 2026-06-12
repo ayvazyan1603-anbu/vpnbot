@@ -7,7 +7,8 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Admin
-ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
+ADMIN_IDS = [int(x.strip()) for x in os.getenv("ADMIN_IDS", "0").split(",") if x.strip()]
+ADMIN_ID = ADMIN_IDS[0]  # первый — главный (для обратной совместимости)
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 SUPPORT_USERNAME = os.getenv("SUPPORT_USERNAME", "support")
 

@@ -27,6 +27,52 @@ async def init_db():
                 authenticated INTEGER DEFAULT 0
             )
         """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        """)
+        await db.commit()
+    # Seed prices from config if not yet in DB
+    await init_prices()
+
+
+async def init_prices():
+    """Записать цены из config в БД, если они ещё не заданы."""
+    import config
+    defaults = {
+        "price_1_month": config.PRICE_1_MONTH,
+        "price_3_months": config.PRICE_3_MONTHS,
+        "price_6_months": config.PRICE_6_MONTHS,
+        "price_12_months": config.PRICE_12_MONTHS,
+    }
+    async with aiosqlite.connect(DB_PATH) as db:
+        for key, value in defaults.items():
+            await db.execute(
+                "INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)",
+                (key, str(value))
+            )
+        await db.commit()
+
+
+async def get_prices() -> dict:
+    """Вернуть актуальные цены из БД."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT key, value FROM settings WHERE key LIKE 'price_%'"
+        )
+        rows = await cursor.fetchall()
+    return {row[0]: int(row[1]) for row in rows}
+
+
+async def set_price(plan_key: str, price: int):
+    """Обновить цену тарифа (plan_key: price_1_month и т.д.)."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
+            (plan_key, str(price))
+        )
         await db.commit()
 
 async def create_order(user_id, username, full_name, plan, price):
@@ -82,5 +128,26 @@ async def set_admin_authenticated(user_id, value: bool):
         await db.execute(
             "INSERT OR REPLACE INTO admins (user_id, authenticated) VALUES (?, ?)",
             (user_id, 1 if value else 0)
+        )
+        await db.commit()
+
+async def get_admin_password() -> str:
+    """Получить текущий пароль из БД или вернуть дефолтный из config."""
+    import config
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT value FROM settings WHERE key='admin_password'"
+        )
+        row = await cursor.fetchone()
+        if row:
+            return row[0]
+        return config.ADMIN_PASSWORD
+
+async def set_admin_password(new_password: str):
+    """Обновить пароль в БД."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
+            ('admin_password', new_password)
         )
         await db.commit()

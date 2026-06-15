@@ -236,7 +236,7 @@ async def approve_order(call: CallbackQuery):
             f"⏳ Срок: {result['expire_days']} дней\n\n"
             f"🔗 <b>Ваша ссылка подключения:</b>\n"
             f"<code>{result['link']}</code>\n\n"
-            "📲 Скопируйте ссылку и вставьте в приложение (v2rayNG, Hiddify, Streisand и др.)\n\n"
+            "📲 Скопируйте ссылку и вставьте в приложение (v2rayNG, Hiddify, Streisand, HAPP и др.)\n\n"
             f"По вопросам: @{config.SUPPORT_USERNAME}"
         )
 

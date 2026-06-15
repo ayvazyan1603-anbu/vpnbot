@@ -37,14 +37,13 @@ async def back_main(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "info")
 async def show_info(call: CallbackQuery):
     text = (
-        "ℹ️ <b>О нашем VPN</b>\n\n"
-        "Здесь вы можете написать любой текст о вашем VPN-сервисе.\n\n"
-        "Например:\n"
-        "• Протокол: VLESS\n"
-        "• Сервер: Европа / США\n"
-        "• Скорость: до 1 Гбит/с\n"
-        "• Без логов\n"
-        "• Работает в России ✅"
+        "Надоело,что не грузит телеграмм,а там находится часть вашей жизни?\n"
+        "Мы точно знаем как вам помочь!!!\n\n"
+        
+        "Вот 3 факта о нас:\n"
+        "✅ Реально работает в РФ (обход DPI)\n"
+        "✅ Скорость до 1 Гбит/с — ютуб в 4K\n"
+        "✅ Нет логов — ваша история никому не нужна\n"
     )
     await call.message.edit_text(text, parse_mode="HTML", reply_markup=back_to_main())
 

@@ -95,7 +95,7 @@ async def select_plan(call: CallbackQuery, state: FSMContext):
 
     text = (
         f"✅ Вы выбрали: <b>{html.escape(plan_name)}</b> — <b>{price}₽</b>\n\n"
-        f"💳 Оплатите на реквизиты:\n<code>{html.escape(config.PAYMENT_DETAILS)}</code>\n\n"
+        f"💳 Оплатите на номер:\n<code>{html.escape(config.PAYMENT_DETAILS)}</code> (Обязательно OZON Банк) \n\n"
         "📸 После оплаты отправьте <b>скриншот чека</b> в этот чат.\n\n"
         "⚠️ Заказ активируется после проверки оплаты администратором."
     )
